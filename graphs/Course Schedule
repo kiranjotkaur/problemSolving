@@ -1,0 +1,41 @@
+public class Solution {
+    public boolean canFinish(int numCourses, int[][] pre) {
+        Set<Integer> set = new HashSet();
+        Map<Integer, List<Integer>> map = new HashMap();
+        
+        Stack<Integer> stack = new Stack();
+        
+        int n = pre.length;
+        
+        for(int i = 0; i < n; i++){
+            List<Integer> list = map.getOrDefault(pre[i][1], new ArrayList());
+            list.add(pre[i][0]);
+            map.put(pre[i][1], list);
+        }
+        
+        for(int i = 0; i < n; i++){
+            if(!set.contains(i)){
+                set.add(i);
+                topSortUtil(set, map, stack, i);
+            }
+        }
+        
+        return numCourses == stack.size();
+    }
+    
+    public void topSortUtil(Set<Integer> set, Map<Integer, List<Integer>> map, Stack<Integer> stack, Integer key){
+        
+        if(map.containsKey(key)){
+            List<Integer> val = map.get(key);
+        
+            for(int i = 0; i < val.size(); i++){
+                 if(!set.contains(val.get(i))){
+                     set.add(val.get(i));
+                    topSortUtil(set, map, stack, val.get(i));
+                 }
+            }
+        }
+        
+        stack.push(key);
+    }
+}
