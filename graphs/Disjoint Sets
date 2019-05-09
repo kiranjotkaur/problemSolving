@@ -1,0 +1,103 @@
+# Disjoint Sets Code : 
+/* package whatever; // don't place package name! */
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class DisjointSets
+{
+	private Map<Long, Node> map = new HashMap();
+	
+	class Node {
+		long data;
+		int rank;
+		Node parent;
+	}
+	
+	public void makeSet(long data){
+		Node n = new Node();
+		n.data = data;
+		n.rank = 0;
+		n.parent = n;
+	
+		map.put(data, n);
+	}
+	
+	public long findSet(long data){
+		return findSet(map.get(data)).data;
+		
+	}
+	
+	/**
+	 * path decompression happens on this recursive path
+	 **/
+	private Node findSet(Node node){
+		if(node.parent == node){
+			return node;
+		}
+		
+		node.parent = findSet(node.parent);
+		
+		return node.parent;
+	}
+	
+	/**
+	 *	union happens using rank
+	 **/	
+	public void unionSet(long d1, long d2){
+		Node da1 = map.get(d1);
+		Node da2 = map.get(d2);
+		
+		Node p1 = findSet(da1);
+		Node p2 = findSet(da2);
+		
+		if(p1.data == p2.data)return;
+		
+		if(p1.rank >= p2.rank){
+			p1.rank = (p1.rank == p2.rank) ? p1.rank + 1 : p1.rank;
+			p2.parent = p1;
+		}else {
+			p1.parent = p2;
+		}
+	}
+	
+	public static void main(String[] args) {
+		DisjointSets set = new DisjointSets();
+		
+		set.makeSet(1);
+		set.makeSet(2);
+		set.makeSet(3);
+		set.makeSet(4);
+		set.makeSet(5);
+		
+	    System.out.println("Parents before joining 1 and 2");
+		System.out.println("1 -> " + set.findSet(1));
+		System.out.println("2 -> " + set.findSet(2));
+
+		set.unionSet(1, 2);
+		
+		System.out.println("Parents after joining 1 and 2");
+	    System.out.println(set.findSet(1));
+		System.out.println(set.findSet(2));
+		
+		System.out.println("Parents before joining others");
+		System.out.println("1 -> " + set.findSet(1));
+		System.out.println("2 -> " + set.findSet(2));
+	    System.out.println("3 -> " + set.findSet(3));
+		System.out.println("4 -> " + set.findSet(4));
+		System.out.println("5 -> " + set.findSet(5));
+		
+		
+		set.unionSet(3, 4);
+		set.unionSet(4, 5);
+		set.unionSet(2, 3);
+		
+		System.out.println("Parents after joining");
+		System.out.println("1 -> " + set.findSet(1));
+		System.out.println("2 -> " + set.findSet(2));
+		System.out.println("3 -> " + set.findSet(3));
+		System.out.println("4 -> " + set.findSet(4));
+		System.out.println("5 -> " + set.findSet(5));
+	}
+}
